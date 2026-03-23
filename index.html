@@ -1,48 +1,220 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Il Treno Fantasma</title>
+<title>Luis Fader — Тайна пирамид</title>
 
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle, #1a1a1a, #000);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
+/* CONTENEDOR */
+.player {
+    width: 380px;
+    background: #111;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(255,140,0,0.4);
+}
+
+/* PORTADA */
+.cover {
+    width: 100%;
+    height: 380px;
+    background: url('portada.png') center/cover no-repeat;
+}
+
+/* INFO */
+.info {
+    text-align: center;
+    padding: 15px;
+}
+
+.info h1 {
+    margin: 5px;
+    color: gold;
+}
+
+.info h2 {
+    margin: 0;
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* CONTROLES */
+.controls {
+    text-align: center;
+    margin: 10px;
+}
+
+button {
+    background: gold;
+    border: none;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* PROGRESS */
+.progress-container {
+    width: 90%;
+    height: 5px;
+    background: #333;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: gold;
+}
+
+/* PLAYLIST */
+.playlist {
+    padding: 10px 20px 20px;
+}
+
+.track {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+}
+
+.track:hover {
+    color: gold;
+}
+
+.active {
+    color: gold;
+    font-weight: bold;
+}
+</style>
 </head>
 
 <body>
 
-<div class="hero">
-    <h1>🚂 IL TRENO FANTASMA</h1>
-    <p class="subtitle">Un viaggio misterioso tra amore e libertà</p>
+<div class="player">
 
-    <img src="images/marcos-alicia.png" class="hero-img">
-</div>
+    <div class="cover"></div>
 
-<div class="container">
-
-    <!-- GALLERIA -->
-    <div class="card">
-        <h2>✨ Personaggi</h2>
-        <div class="gallery">
-            <img src="images/alicia.png">
-            <img src="images/marcos-alicia.png">
-        </div>
+    <div class="info">
+        <h1>Luis Fader</h1>
+        <h2>Тайна пирамид</h2>
     </div>
 
-    <!-- CAPITOLI -->
-    <div class="card">
-        <h2>📖 Capitoli (clicca!)</h2>
-        <div id="capList"></div>
+    <div class="controls">
+        <button id="playBtn">▶</button>
     </div>
+
+    <div class="progress-container" id="progressContainer">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <audio id="audio"></audio>
+
+    <div class="playlist" id="playlist"></div>
 
 </div>
 
-<footer>
-    Il Treno Fantasma – esperienza interattiva
-</footer>
+<script>
+const tracks = [
+    { name: "Између даха и ватре", file: "tema1.mp3" },
+    { name: "El MALÓN", file: "tema2.mp3" },
+    { name: "Su mirada celestial", file: "tema3.mp3" },
+    { name: "Лучи", file: "tema4.mp3" }
+];
 
-<script src="script.js"></script>
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("playBtn");
+const progress = document.getElementById("progress");
+const progressContainer = document.getElementById("progressContainer");
+const playlist = document.getElementById("playlist");
+
+let current = 0;
+let playing = false;
+
+/* GENERAR LISTA */
+tracks.forEach((track, index) => {
+    const div = document.createElement("div");
+    div.classList.add("track");
+    div.innerText = track.name;
+    div.onclick = () => loadTrack(index);
+    playlist.appendChild(div);
+});
+
+/* CARGAR TRACK */
+function loadTrack(index) {
+    current = index;
+    audio.src = tracks[index].file;
+    audio.load();
+    audio.play()
+        .then(() => {
+            playing = true;
+            playBtn.innerText = "⏸";
+            updateActive();
+        })
+        .catch(err => {
+            console.error("Error al reproducir:", err);
+            alert("No se pudo reproducir el audio.");
+        });
+}
+
+/* PLAY / PAUSE */
+playBtn.onclick = () => {
+    if (!audio.src) {
+        loadTrack(0);
+        return;
+    }
+
+    if (playing) {
+        audio.pause();
+        playBtn.innerText = "▶";
+    } else {
+        audio.play();
+        playBtn.innerText = "⏸";
+    }
+
+    playing = !playing;
+};
+
+/* PROGRESO */
+audio.addEventListener("timeupdate", () => {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = percent + "%";
+});
+
+/* CLICK EN BARRA */
+progressContainer.addEventListener("click", e => {
+    const width = progressContainer.clientWidth;
+    const clickX = e.offsetX;
+    audio.currentTime = (clickX / width) * audio.duration;
+});
+
+/* SIGUIENTE AUTOMÁTICO */
+audio.addEventListener("ended", () => {
+    current = (current + 1) % tracks.length;
+    loadTrack(current);
+});
+
+/* TRACK ACTIVO */
+function updateActive() {
+    document.querySelectorAll(".track").forEach((el, i) => {
+        el.classList.toggle("active", i === current);
+    });
+}
+</script>
 
 </body>
 </html>
