@@ -1,172 +1,48 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luis Fader — Тайна пирамид</title>
+<title>Il Treno Fantasma</title>
 
-<style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top, #1a1a1a, #000);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-/* CONTENEDOR */
-.player {
-    width: 360px;
-    background: rgba(20,20,20,0.9);
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 0 40px rgba(255,140,0,0.5);
-}
-
-/* PORTADA */
-.cover {
-    width: 100%;
-    height: 360px;
-    background: url('portada.png') center/cover no-repeat;
-}
-
-/* INFO */
-.info {
-    padding: 20px;
-    text-align: center;
-}
-
-.info h1 {
-    margin: 5px 0;
-    font-size: 22px;
-    color: gold;
-}
-
-.info h2 {
-    margin: 0;
-    font-size: 16px;
-    color: #ccc;
-}
-
-/* CONTROLES */
-.controls {
-    display: flex;
-    justify-content: center;
-    margin: 15px 0;
-}
-
-button {
-    background: gold;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.1);
-}
-
-/* LISTA */
-.playlist {
-    padding: 10px 20px 20px;
-}
-
-.track {
-    padding: 10px;
-    border-bottom: 1px solid #333;
-    cursor: pointer;
-}
-
-.track:hover {
-    color: gold;
-}
-
-.active {
-    color: gold;
-    font-weight: bold;
-}
-</style>
 </head>
 
 <body>
 
-<div class="player">
+<div class="hero">
+    <h1>🚂 IL TRENO FANTASMA</h1>
+    <p class="subtitle">Un viaggio misterioso tra amore e libertà</p>
 
-    <div class="cover"></div>
+    <img src="images/marcos-alicia.png" class="hero-img">
+</div>
 
-    <div class="info">
-        <h1>Luis Fader</h1>
-        <h2>Тайна пирамид</h2>
+<div class="container">
+
+    <!-- GALLERIA -->
+    <div class="card">
+        <h2>✨ Personaggi</h2>
+        <div class="gallery">
+            <img src="images/alicia.png">
+            <img src="images/marcos-alicia.png">
+        </div>
     </div>
 
-    <div class="controls">
-        <button onclick="togglePlay()">▶</button>
-    </div>
-
-    <audio id="audio"></audio>
-
-    <div class="playlist">
-        <div class="track" onclick="playTrack(0)">Између даха и ватре</div>
-        <div class="track" onclick="playTrack(1)">El MALÓN</div>
-        <div class="track" onclick="playTrack(2)">Su mirada celestial</div>
-        <div class="track" onclick="playTrack(3)">Лучи</div>
+    <!-- CAPITOLI -->
+    <div class="card">
+        <h2>📖 Capitoli (clicca!)</h2>
+        <div id="capList"></div>
     </div>
 
 </div>
 
-<script>
-const tracks = [
-    "Између даха и ватре.mp3",
-    "El MALÓN.mp3",
-    "Su mirada celestial (1).mp3",
-    "Лучи (1).mp3"
-];
+<footer>
+    Il Treno Fantasma – esperienza interattiva
+</footer>
 
-let currentTrack = 0;
-let audio = document.getElementById("audio");
-let isPlaying = false;
-
-function playTrack(index) {
-    currentTrack = index;
-    audio.src = tracks[index];
-    audio.play();
-    isPlaying = true;
-    updateActive();
-}
-
-function togglePlay() {
-    if (!audio.src) {
-        playTrack(0);
-        return;
-    }
-
-    if (isPlaying) {
-        audio.pause();
-        isPlaying = false;
-    } else {
-        audio.play();
-        isPlaying = true;
-    }
-}
-
-function updateActive() {
-    document.querySelectorAll('.track').forEach((el, i) => {
-        el.classList.toggle('active', i === currentTrack);
-    });
-}
-
-audio.addEventListener("ended", () => {
-    currentTrack = (currentTrack + 1) % tracks.length;
-    playTrack(currentTrack);
-});
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
